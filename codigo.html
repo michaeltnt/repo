@@ -1,0 +1,191 @@
+<script>
+
+var app = angular.module("myapp", []);
+var json = "";
+var posts = [];
+var post_per_page = 2;
+var cantidad = 0;
+app.config(function($interpolateProvider) {
+  $interpolateProvider.startSymbol('[[');
+  $interpolateProvider.endSymbol(']]');
+});
+
+app.controller("controlador", function($scope, $http){     
+  
+  $scope.showMore = true;
+  $scope.star = 0;
+  $scope.end = post_per_page;
+  $scope.load = false;
+  $scope.toggle = 
+  function(e){
+    e =="map" ? $scope.map = !$scope.map : $scope.horario = !$scope.horario 
+    console.log(e)
+  };
+  $scope.leave = 
+  function(){
+    $scope.map = false;
+    $scope.horario = false;
+    $scope.tel = false;
+  };
+  var datos = "type=rel&star="+$scope.star+"&end="+$scope.end;
+  
+  $http({
+    method: 'GET',
+    url: 'https://www.tudosisdigital.com/sitio?'+datos
+  }).then(
+    function successCallback(response) {      
+      cantidad = cantidad+post_per_page;
+      var data = response.data.toString().replace(/\n/g, "").replace("\,]","]").replace("  ","").split("<x>");
+      json = data[1]
+      json = JSON.parse(("["+json+"]").replace("\,]","]"));             
+      for (var i = 0; i < cantidad; i++) {
+        posts.push(json[i])
+      }      
+      console.log(cantidad)
+      console.log(JSON.stringify(posts))
+      $scope.posts = posts
+      cantidad > json.length  ? $scope.showMore = false : $scope.showMore = true;
+    }
+  ); 
+  
+  $scope.more=
+  function(){
+    var datos = "type=rel&star="+$scope.star+"&end="+$scope.end;
+    $scope.load = true;                    
+    console.log(json);       
+    var cantidad2 = cantidad;
+    cantidad = cantidad + post_per_page;
+    for (var i = cantidad2; i < cantidad; i++) {
+      posts.push(json[i]);      
+      (cantidad2+i) > json.length  ? $scope.showMore = false : $scope.showMore = true;
+      if((cantidad2+i) > json.length){
+        return false;
+      }
+    }
+    console.log(cantidad)
+    $scope.posts = posts;
+    $scope.load = false;
+  };
+});
+
+
+$(document).ready(function(){
+  $('slide [class*="clone"]').remove();
+  var slides = $('slide li img');
+  console.clear()
+  for (var i = 0; i < slides.length; i++) {
+    console.log(slides[i]);
+    $(".c_slider").append('<div class="slide"style="background-image: url("'+slides[i].src+');"></div>')
+  }
+  tool.bxSlider('#slider .c_slider');
+})
+$(window).load(function(){
+  $('<style>.'+'bx-pager.bx-default-pager:after { content: "'+$(".bx-pager-link").length+'";}</style>').appendTo("head");
+})
+</script>
+
+<style>
+a {
+  text-decoration: none;
+  color: #333;
+}
+.bx-pager.bx-default-pager:after {
+  
+  float: left;
+  position: relative;
+  left: 49%;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+}
+.restaurante {
+  float: left;
+  color: #170e2a;
+}
+#map > div > div > div:nth-child(4) > div > div:nth-child(2) > span, #map > div > div > div.gmnoprint.gm-style-cc > div:nth-child(2) > a, #map > div > div > div:nth-child(2) > a > div{
+  display: none;
+}
+.todos_restaurantes .ng-scope a{% for topic in  content.topic_list  %}:not(.{{topic}}){% endfor %}{
+  /*display: none;*/
+}
+#map, .horarios_data {
+  max-height: 0px;
+  padding: 0;
+  transition: 500ms;
+}
+
+.horarios_data {
+  position: relative;
+  overflow: hidden;
+}
+.direc.green:hover, .sitio_web.green:hover {
+  background-color: #7de4ad!IMPORTANT;
+}
+.activo, .direc.green"hover {
+  background-color: #63f19a;
+  background-image: url(https://cdn2.hubspot.net/hubfs/2786288/restaurantes/up.png?t=1492620230715);
+  background-position: 95% 25px;
+  background-size: auto;
+  background-repeat: no-repeat;
+}
+.loading{
+  max-height: 300px !important;
+  height: 300px !important;
+  position: absolute !important;
+  opacity: 1;
+  top: 100% !important;
+  width: 300px;
+}
+#map.show {
+  max-height: 400px;
+  padding: inherit;
+  height: 300px;
+}
+.horarios_data.show {
+  max-height: 400px;
+  padding: inherit;
+  height: auto;
+}
+#map {
+  height: 300px;
+  width: 100%;
+  float: left;
+}
+
+.tx_dir {
+  cursor: pointer;
+}
+.cont_verde {
+  padding: 0px;
+}
+.tx_dir {
+  text-align: left;
+}
+.direc.green {
+  padding-bottom: 0;
+}
+.text-block-6 {
+  font-weight: 700;
+}
+.c_tit {
+  float: left;
+  position: relative;
+  margin-bottom: 20px;
+}
+.titulo_int {
+  position: relative;
+}
+.c_tit .ranking._2 {
+  display: block;
+  margin-right: auto;
+  margin-bottom: 1px;
+  margin-left: auto;
+  float: none;
+  position: absolute;
+  right: 68%;
+  width: 100%;
+}
+.cont_calificacion {
+  position: relative;
+}
+
+</style>
